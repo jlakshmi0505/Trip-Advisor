@@ -1,0 +1,200 @@
+ <html>
+ <head>
+     <title>Hotel Info</title>
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+     <script>
+/***** Save Hotel details ***/
+   function saveHotel(id){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+        var x = document.getElementById(id);
+         var jsonObj = JSON.parse(this.responseText);
+        var message = jsonObj.Message;
+        x.innerHTML = message;
+       }
+    };
+    xhttp.open("POST", "/saveHotel", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("hotelId="+id);
+}
+
+/*** delete hotel detaile****/
+ function delSaveHotel(){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+         var jsonObj = JSON.parse(this.responseText);
+        var message = jsonObj.Message;
+        alert(message);
+       }
+    };
+    xhttp.open("POST", "/saveHotel", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("delete=true");
+}
+/**** Retrieving Save Hotel Details ***/
+function getSaveHotel(){
+var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+  var jsonObj = JSON.parse(xhttp.responseText);
+ var message = jsonObj.Message;
+  console.log(message);
+  var l = message.length;
+  var i;
+  var text = new Array();
+  for (i = 0; i < l; i++){
+  text[i]=message[i].Hotel;
+  }
+ alert(JSON.stringify(text));}
+ 	};
+ 	xhttp.open("GET", "/saveHotel", true);
+ 	xhttp.send();
+}
+
+/**** Add visited link *****/
+function addVisitedLink(id){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+       }
+    };
+    xhttp.open("POST", "/visitHotel", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("hotelId="+id);
+}
+
+/***** Delete visited link****/
+ function delVisitedLink(){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+         var jsonObj = JSON.parse(this.responseText);
+        var message = jsonObj.Message;
+        alert(message);
+       }
+    };
+    xhttp.open("POST", "/visitHotel", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("delete=true");
+}
+/**** Get visited link ****/
+function getVisitedLink(){
+var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+  var jsonObj = JSON.parse(xhttp.responseText);
+ var message = jsonObj.Message;
+  console.log(message);
+  var l = message.length;
+  var i;
+  var text = new Array();
+  for (i = 0; i < l; i++){
+  text[i]=message[i].Hotel;
+  }
+ alert(JSON.stringify(text));
+     	}
+ 	};
+ 	xhttp.open("GET", "/visitHotel", true);
+ 	xhttp.send();
+}
+     </script>
+     <style>
+           body {
+        font: 20px Montserrat, sans-serif;
+        line-height: 1.8;
+        color: #423473;
+        }
+        p {font-size: 16px;}
+        .margin {margin-bottom: 45px;}
+        .bg-1 {
+        background-color: #bca51a;
+        color: #ffffff;
+        }
+        .container-fluid {
+        padding-top: 70px;
+        padding-bottom: 70px;
+        }
+        .form-control {
+  display:inline  !important;
+  }
+     </style>
+ </head>
+    <body>
+    <div class="container-fluid bg-1 text-center">
+        <h3><a href="/logout">Log Out</a></h3> <h2>Welcome !!!! $user</h2>
+        <h4>Last LoginTime  $lastLoginDetails</h4>
+        <img src="search.jpg" class="img-responsive" style="display:inline"  width="60%" height="350">
+        <div class="form-group">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Search By City</th>
+                        <th>Search By Name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <form action="/search" method=post>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <select id="cities" name="cities">
+                                #foreach( $city in $cityNames)
+                                <option value="$city"
+                                        #if($cities== $option.value)
+                                        selected="selected" #end>$city
+                                    #end
+                                </option>
+                            </select>
+                        </td>
+                        <td><input type="text" name="search1" placeholder="searchByCity"></td>
+                        <td><input type="submit" class="btn btn-primary" value="Search"/></td>
+                    </tr>
+                    </form>
+                    </tbody>
+                </table>
+        </div>
+        <div class="form-group">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Hotel Name</th>
+                    <th scope="col">Expedia Link</th>
+                    <th scope="col">Average Rating</th>
+                    <th scope="col">Save Hotel</th>
+                    <th scope="col"><input type="button" class="btn btn-primary" onclick="getVisitedLink()" value="Get visited hotel List."/>
+                    <th scope="col"><input type="button" class="btn btn-primary"  onclick="delVisitedLink()" value="Delete Visited Hotel List"/>
+                    <th scope="col"><input type="button" class="btn btn-primary" onclick="getSaveHotel()" value="Get saved hotel List."/>
+                    <th scope="col"><input type="button" class="btn btn-primary"  onclick="delSaveHotel()" value="Delete Save Hotel List"/>
+                </tr>
+                </thead>
+                <tbody>
+                #foreach( $l in $list)
+                <tr>
+                    <td>
+                        <a href="/hotel?hotelId=$l.id">$l.f</a>
+                    </td>
+                    <td>
+                        <a href="https://www.expedia.com/H${l.id}.Hotel-information" onclick="addVisitedLink($l.id);return false;">$l.f</a>
+                    </td>
+                    <td>$l.avgRating</td>
+                    <td>
+                    <input type="button" class="btn btn-primary" onclick="saveHotel($l.id)" value="Save this hotel"/>
+                    </td>
+                    <td>
+                        <p id = "$l.id" ></p>
+                    </td>
+                    #end
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </body>
+ </html>

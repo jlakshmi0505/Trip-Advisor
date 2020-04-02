@@ -1,0 +1,218 @@
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Hotel Info</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script>
+    /********* Adding review ******/
+function addRev(){
+document.form1.target = "myActionWin";
+var popwin=window.open("","myActionWin","width=500,height=500,toolbar=0");
+ popwin.document.write('<form name ="form11" action="/addReview" method="post">');
+ popwin.document.write('<table border=\"0\">');
+ popwin.document.write('\t<tr>');
+ popwin.document.write('\t\t<td>Review Title:</td>');
+ popwin.document.write('\t\t<td><input type=\"text\" name=\"reviewTitle\" id=\"reviewTitle\" size=\"30\"></td>');
+ popwin.document.write('</tr>');
+ popwin.document.write('\t<tr>');
+ popwin.document.write('\t\t<td>Review Text:</td>');
+ popwin.document.write('\t\t<td><textarea rows="4" cols="50" name=\"reviewText\" id=\"reviewText\"></textarea></td>');
+  popwin.document.write('</tr>');
+ popwin.document.write('\t<tr>');
+ popwin.document.write('\t\t<td>Rating</td>');
+ popwin.document.write('\t\t<td><select name=\"rating\" id=\"rating\"><option value =\"1\">1</option><option value =\"2\">2</option>');
+ popwin.document.write('<option value =\"3\">3</option><option value =\"4\">4</option>');
+ popwin.document.write('<option value =\"5\">5</option></select></td>');
+ popwin.document.write('\t\t<td><input type="hidden" value="$hotel.id" name="hotelId"/></td>');
+ popwin.document.write('</tr>');
+ popwin.document.write('</table>');
+ popwin.document.write('<p><input type="submit" value="submit"></p>');
+ popwin.document.write('</form>');
+  setInterval(updatePage, 1000);
+    setInterval(getAttraction, 1000);
+}
+function edit(){
+document.getElementById("$user").contentEditable=true;
+document.getElementById("editBtn").style.display="none";
+document.getElementById("saveBtn").style.display="block";
+}
+
+function save(){
+document.getElementById("$user").contentEditable=false;
+document.getElementById("editBtn").style.display="block";
+document.getElementById("saveBtn").style.display="none";
+var t = document.getElementById("$user");
+var text = t.cells.reviewText.innerText;
+var title = t.cells.reviewTitle.innerText;
+var rating = t.cells.rating.innerText;
+var hotelId = $hotel.id;
+var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+       }
+    };
+    xhttp.open("POST", "/addReview", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("reviewTitle="+title+"&reviewText="+text+"&rating="+rating+"&hotelId="+hotelId+"&edit=true");
+     setInterval(updatePage, 1000);
+    setInterval(getAttraction, 1000);
+}
+
+/******Deleting Review *****/
+
+function del(){
+document.getElementById("editBtn").style.display="block";
+document.getElementById("saveBtn").style.display="none";
+var hotelId = $hotel.id;
+var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+       if (this.readyState == 4 && this.status == 200) {
+       }
+    };
+    xhttp.open("POST", "/addReview", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("&hotelId="+hotelId+"&del=true");
+}
+
+/******updating Page Ajax *****/
+function updatePage(){
+var hotelId = $hotel.id;
+    var xhttp = new XMLHttpRequest();
+   	xhttp.onreadystatechange = function() {
+     	if (xhttp.readyState == 4 && xhttp.status == 200) {
+     	}
+ 	}
+ 	xhttp.open("GET", "/hotel?hotelId=hotelId", true);
+ 	xhttp.send();
+}
+ setInterval(updatePage, 1000);
+    setInterval(getAttraction, 1000);
+
+/******Get Attraction Ajax *****/
+function getAttraction(){
+var hotelId = $hotel.id;
+var radius = document.getElementById("radius").value;
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+  if (xhttp.readyState == 4 && xhttp.status == 200) {
+  var jsonObj = JSON.parse(xhttp.responseText);
+ var message = jsonObj.Message;
+   var x = document.getElementById("divTag");
+  console.log(message);
+  var l = message.length;
+  var i;
+  var text = "";
+  for (i = 0; i < l; i++){
+  text += message[i].Attraction + "<br>";
+  }
+  x.innerHTML = text;}};
+ 	xhttp.open("GET", "/attractions?hotelId="+hotelId+"&radius="+radius, true);
+ 	xhttp.send();
+}
+
+</script>
+    <style>
+         <style>
+        body {
+        font: 20px Montserrat, sans-serif;
+        line-height: 1.8;
+        color: #423473;
+        }
+        p {font-size: 16px;}
+        .margin {margin-bottom: 45px;}
+        .bg-1 {
+        background-color: #bca51a;
+        color: #ffffff;
+        }
+        .container-fluid {
+        padding-top: 70px;
+        padding-bottom: 70px;
+        }
+        .form-control {
+  display:inline  !important;
+  }
+    </style>
+</head>
+<body onload = "getAttraction()" >
+<div class="container-fluid bg-1 text-center">
+    <table class="border-0" align="right">
+        <tbody>
+        <tr><td>Attractions Nearby:</td></tr>
+        <tr id = "att">
+            <td><div id ="divTag">
+            </div>
+            </td>
+        </tr>
+        <tr><td><input type = "text" id ="radius"/>Radius</td></tr>
+        <tr><td><input type = "button" id ="attract" onclick="getAttraction()" class="btn btn-primary"/>Get Attraction</td></tr>
+        </tbody>
+    </table>
+    <div class="table-responsive">
+        <table class="border-0">
+            <tbody>
+            <tr><td><a href="/logout" style="align-right">Log Out</a></td></tr>
+            <tr> <td><h4>$hotel.f</h4></td>
+            </tr>
+            <tr>
+                <td><h4>$hotel.ad</h4></td>
+            </tr>
+            <tr>
+                <td><h4>$hotel.ci</h4></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>UserName</th>
+                <th>Title</th>
+                <th>Review Text</th>
+                <th>Date</th>
+                <th>Rating</th>
+            </tr>
+            </thead>
+            <tbody>
+            <form name ="form1" id ="form1" action="/addReview" method="post">
+                <tr>
+                    #if($isAlreadyAddedReview != "true")
+                    <input type="button"  onclick="addRev()" id = "bt1" class="btn btn-primary" value ="Add Review"/>
+                    #end
+                </tr>
+                #foreach( $review in $listOfReviews )
+                <tr id = "$review.userNickname">
+                    <td id ="user">
+                        $review.userNickname
+                    </td>
+                    <td id="reviewTitle">
+                        $review.title
+                    </td>
+                    <td id="reviewText">
+                        $review.reviewText
+                    </td>
+                    <td id="date">
+                        $review.reviewSubmissionTime
+                    </td>
+                    <td id ="rating">
+                        $review.ratingOverall
+                    </td>
+                    #if($isAlreadyAddedReview == "true" && $review.userNickname == $user)
+                    <td>
+                        <input type="button"  onclick="edit()" id = "editBtn" class="btn btn-primary" value ="Edit Review"/>
+                        <input type="button"  onclick="save()" id = "saveBtn" class="btn btn-primary" value ="Update" style ="display:none"/>
+                        <input type="button"  onclick="del()" id = "delBtn" class="btn btn-primary" value ="Delete"/>
+                        #end
+                    </td>
+                    #end
+                </tr>
+            </form>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
